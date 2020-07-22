@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: develop
+    tty: true
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../src:/usr/opt/app/src
+      - ../migrations:/usr/opt/app/migrations
+      - ../pgconfig.json:/usr/opt/app/pgconfig.json
+      - ../.mocharc.yaml:/usr/opt/app/.mocharc.yaml
+      - .env.docker:/usr/opt/app/.env
+
+  db:
+    image: postgres:12.3-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: my-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+    db-data:
