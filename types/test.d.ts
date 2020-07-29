@@ -1,5 +1,5 @@
 import type * as chai from 'chai'
-import type * as test from '@test'
+import type * as test from '../test/hooks/helper'
 import type * as testdouble from 'testdouble'
 
 declare global {

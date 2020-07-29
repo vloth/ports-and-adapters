@@ -9,9 +9,7 @@ const storage = mock<typeof StorageType>('./storage.adapter')
 const usecase = load<typeof UsecaseType>('./usecase')
 
 test('mark pending task as done should update todo', async function () {
-  const pendingtask = factory.base
-    .combine(factory.db)
-    .build({ done: false, date: null })
+  const pendingtask = factory.base.combine(factory.db).build({ done: false, date: null })
 
   calling(storage.get(pendingtask.id)).resolves(pendingtask)
   await usecase.markAsDone(pendingtask.id)
@@ -26,9 +24,7 @@ test('mark pending task as done should update todo', async function () {
 })
 
 test('mark an already completed task as done should fail', async function () {
-  const completedtask = factory.base
-    .combine(factory.db)
-    .build({ done: true, date: new Date() })
+  const completedtask = factory.base.combine(factory.db).build({ done: true, date: new Date() })
 
   calling(storage.get(completedtask.id)).resolves(completedtask)
 
