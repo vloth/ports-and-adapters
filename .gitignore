@@ -3,3 +3,4 @@ coverage
 .nyc_output
 .env
 **/src/**/*.js
+**/test/**/*.js
