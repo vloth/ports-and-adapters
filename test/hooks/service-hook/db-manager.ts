@@ -26,8 +26,11 @@ export async function startPgContainer(): Promise<DbConfig> {
   }
 }
 
-export function stopPgContainer() {
-  return container == null ? Promise.resolve() : container.stop()
+export async function stopPgContainer() {
+  if (container == null) return Promise.resolve()
+  const { pool } = await import('@protocol/pg')
+  await pool().end()
+  await container.stop()
 }
 
 export async function runMigrations(db: DbConfig) {
@@ -54,9 +57,6 @@ export async function clean() {
      AND table_type = 'BASE TABLE';`
   )
 
-  const tables = query.rows
-    .map(t => t.table_name)
-    .filter(t => !skipTables.includes(t))
-
+  const tables = query.rows.map(t => t.table_name).filter(t => !skipTables.includes(t))
   return Promise.all(tables.map(t => p.query(`DELETE FROM ${t}`)))
 }

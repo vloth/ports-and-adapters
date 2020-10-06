@@ -20,6 +20,13 @@ if (isIntegration || isFunctional) {
     await dbManager.runMigrations(db)
     Object.assign(env, { port: 0, db })
 
+    // fixme: postgres rely partially on env
+    process.env.PGHOST = String(db.port)
+    process.env.PGUSER = db.user
+    process.env.PGPASSWORD = db.password
+    process.env.PGDATABASE = db.database
+    process.env.PGPORT = String(db.port)
+
     if (isFunctional) {
       chai.use(chaiHttp)
       this.server = await appManager.startApplication()
