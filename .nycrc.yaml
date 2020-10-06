@@ -1,0 +1,22 @@
+extends: "@istanbuljs/nyc-config-typescript"
+all: true
+check-coverage: true
+branches: 90
+lines: 90
+functions: 90
+statements: 90
+reporter:
+    - lcov 
+    - text-summary
+exclude:
+  - "coverage"
+  - "test"
+  - "migrations"
+  - "types"
+  - "src/protocol"
+  - "src/**/storage.adapter"
+  - "src/**/*.test.ts"
+  - "src/core/*/http.transport.ts"
+  - "src/transport/http/respond.ts"
+  - "src/app.ts"
+  - "src/index.ts"

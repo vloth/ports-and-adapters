@@ -9,13 +9,8 @@ process.on('unhandledRejection', rejection => {
 })
 
 process.on('uncaughtException', reason => {
-  logger.fatal(
-    reason,
-    '[UNCAUGHT EXCEPTION] Exiting application due to an unhandled exception'
-  )
+  logger.fatal(reason, '[UNCAUGHT EXCEPTION] Exiting application due to an unhandled exception')
   process.exit(1)
 })
 
-app.listen(env.port, () =>
-  logger.info('Application running on port %d', env.port)
-)
+app.listen(env.port, () => logger.info('Application running on port %d', env.port))

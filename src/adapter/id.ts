@@ -8,9 +8,7 @@ export const Id = new t.Type<Id, string, unknown>(
   'Id',
   isId,
   (u, c) =>
-    !isId(u)
-      ? t.failure(u, c, 'invalid custom id')
-      : t.success(parseInt(String(u), 10) as Id),
+    !isId(u) ? t.failure(u, c, 'invalid custom id') : t.success(parseInt(String(u), 10) as Id),
   String
 )
 

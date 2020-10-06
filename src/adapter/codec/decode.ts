@@ -9,9 +9,7 @@ import { reporter } from 'io-ts-reporters'
  *
  * @param type io-ts type to use for decoding incoming values.
  */
-export function decode<Output, Input>(
-  type: t.Decoder<Input, Output>
-): (value: Input) => Output
+export function decode<Output, Input>(type: t.Decoder<Input, Output>): (value: Input) => Output
 
 /**
  * Decodes values using io-ts types, returning the reflecting result.
@@ -19,20 +17,14 @@ export function decode<Output, Input>(
  * @param type io-ts type to use for decoding the value.
  * @param value Value to decode using the given io-ts type.
  */
-export function decode<Output, Input>(
-  type: t.Decoder<Input, Output>,
-  value: Input
-): Output
+export function decode<Output, Input>(type: t.Decoder<Input, Output>, value: Input): Output
 export function decode<Output, Input>(
   type: t.Decoder<Input, Output>,
   value?: Input
 ): ((value: Input) => Output) | Output {
   switch (arguments.length) {
     case 1:
-      return decode.bind<null, t.Decoder<Input, Output>, [Input], Output>(
-        null,
-        type
-      )
+      return decode.bind<null, t.Decoder<Input, Output>, [Input], Output>(null, type)
     default:
       const result = type.decode(value!) // eslint-disable-line
       if (E.isLeft(result)) throw new DecodeError(result)
