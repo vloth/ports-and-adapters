@@ -1,14 +1,15 @@
-import * as tc from 'testcontainers'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as DBMigrate from 'db-migrate'
+import * as tc from 'testcontainers'
 import type * as EnvAdapterType from '@adapter/env'
 
 type DbConfig = typeof EnvAdapterType.env.db
+const debug = String(process.env.DEBUG) === 'true' ? console.log : () => { } // eslint-disable-line
 
 let container: tc.StartedTestContainer
 export async function startPgContainer(): Promise<DbConfig> {
-  console.log('  starting pg container...')
+  debug('  starting pg container...')
   container = await new tc.GenericContainer('postgres')
     .withEnv('POSTGRES_PASSWORD', 'postgres')
     .withEnv('POSTGRES_USER', 'postgres')
@@ -16,7 +17,7 @@ export async function startPgContainer(): Promise<DbConfig> {
     .withExposedPorts(5432)
     .start()
 
-  console.log('  pg container started')
+  debug('  pg container started')
   return {
     host: container.getContainerIpAddress(),
     port: container.getMappedPort(5432),
@@ -34,7 +35,7 @@ export async function stopPgContainer() {
 }
 
 export async function runMigrations(db: DbConfig) {
-  console.log('  running migrations...')
+  debug('  running migrations...')
   const option = { driver: 'pg', ...db }
   const dbm = DBMigrate.getInstance(true, {
     env: 'test',
@@ -43,7 +44,7 @@ export async function runMigrations(db: DbConfig) {
   dbm.silence(true)
   await dbm.registerAPIHook()
   await dbm.up()
-  console.log('  database migrated')
+  debug('  database migrated')
 }
 
 const skipTables = ['migrations']

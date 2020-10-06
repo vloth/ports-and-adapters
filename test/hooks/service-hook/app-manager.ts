@@ -1,20 +1,22 @@
 import type { Server } from 'http'
 
+const debug = String(process.env.DEBUG) === 'true' ? console.log : () => { } // eslint-disable-line
+
 export async function startApplication() {
-  console.log('  starting app...')
+  debug('  starting app...')
   const app = (await import('../../../src/app')).app
   const server = app.listen()
-  console.log('  app is ready')
+  debug('  app is ready')
   return server
 }
 
 export async function stopApplication(server: Server | undefined) {
-  console.log('  stopping app...')
+  debug('  stopping app...')
   return server == null
     ? Promise.resolve()
     : new Promise(resolve =>
         server.close(() => {
-          console.log(' app stopped')
+          debug(' app stopped')
           resolve()
         })
       )
