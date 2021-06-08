@@ -5,7 +5,7 @@ suite('todo storage adapter')
 test('get all todos a', async function () {
   const todos = await storage.getAllTodos()
   expect(todos).to.eql([])
-  const id = await storage.addTodo({
+  const id = await storage.add({
     done: false,
     description: 'do the dishes'
   })
@@ -15,7 +15,7 @@ test('get all todos a', async function () {
 test('get all todos b', async function () {
   const todos = await storage.getAllTodos()
   expect(todos).to.eql([])
-  const id = await storage.addTodo({
+  const id = await storage.add({
     done: false,
     description: 'do the dishes'
   })
