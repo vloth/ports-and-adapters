@@ -1,6 +1,5 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
-import * as td from 'testdouble'
 import * as dbManager from './db-manager'
 import * as appManager from './app-manager'
 import type * as EnvAdapterType from '@adapter/env'
@@ -11,7 +10,7 @@ const TIMEOUT = 60 * 1000 // 1 min
 
 if (isIntegration || isFunctional) {
   const env = {} as typeof EnvAdapterType.env
-  td.replace('@adapter/env', { env })
+  //td.replace('@adapter/env', { env })
 
   before(async function () {
     this.timeout(TIMEOUT)

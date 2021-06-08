@@ -18,19 +18,18 @@ const Env = t.readonly(
 )
 
 type Env = t.TypeOf<typeof Env>
-type Unsafe<T> = { [P in keyof Required<T>]: unknown }
-type UnsafeEnv = Unsafe<Env> & { db: Unsafe<Env['db']> }
-const decodeEnv = (unsafeEnv: UnsafeEnv) => decode(Env, unsafeEnv)
+export let env: Env
 
-// ⚠ !DANGER!
-// side-effect runs when this file is imported
-export const env = decodeEnv({
-  port: process.env.PORT,
-  db: {
-    password: process.env.PGPASSWORD,
-    host: process.env.PGHOST,
-    user: process.env.PGUSER,
-    database: process.env.PGDATABASE,
-    port: process.env.PGPORT
-  }
-})
+export function register() {
+  env = decode(Env, {
+    port: process.env.PORT,
+    db: {
+      password: process.env.PGPASSWORD,
+      host: process.env.PGHOST,
+      user: process.env.PGUSER,
+      database: process.env.PGDATABASE,
+      port: process.env.PGPORT
+    }
+  })
+  return env
+}

@@ -1,26 +1,24 @@
 import 'module-alias/register'
 import 'chai/register-expect'
-import td from 'testdouble'
 import chai from 'chai'
-import promisedChai from 'chai-as-promised'
-import * as testHelper from './helper'
+import chaiP from 'chai-as-promised'
+import chaiS from 'sinon-chai'
+import * as utility from './utility'
+import sinon, { stubInterface } from 'ts-sinon'
+import { logger } from '@protocol/logger'
 
-import type * as LoggerType from '@protocol/logger'
+chai.use(chaiP).use(chaiS)
 
-chai.use(promisedChai)
-
-const loggerMock = td.object<typeof LoggerType>()
-td.replace('@protocol/logger', loggerMock)
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(global as any).td = td
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(global as any).prepare = testHelper.prepare
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(global as any).calling = testHelper.calling
-
-before(function () {
-  this.logger = loggerMock.logger
+Object.assign(global, {
+  sinon,
+  stub: stubInterface,
+  ...utility
 })
 
-afterEach(td.reset)
+beforeEach(function () {
+  sinon.spy(logger, 'info')
+  sinon.spy(logger, 'warn')
+  sinon.spy(logger, 'error')
+})
+
+afterEach(sinon.restore)
