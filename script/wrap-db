@@ -1,0 +1,91 @@
+#!/usr/bin/env node
+/* eslint-disable no-console,@typescript-eslint/no-var-requires  */
+const ora = require('ora')
+const chalk = require('chalk')
+const { GenericContainer } = require('testcontainers')
+const { spawn } = require('child_process')
+
+let info = {
+  PGPASSWORD: 'postgres',
+  PGHOST: '',
+  PGUSER: 'postgres',
+  PGDATABASE: 'my-app',
+  PGPORT: '0'
+}
+
+let container = null
+async function ci() {
+  // remove first two arguments [node, path] from command arg
+  const childCmd = process.argv.splice(2)
+  const exitCode = await run(childCmd, process.env)
+  process.exit(exitCode)
+}
+
+async function main() {
+  const spinner = ora(chalk.blue('  Starting Postgres')).start()
+  container = await new GenericContainer('postgres', '12.3-alpine')
+    .withEnv('POSTGRES_PASSWORD', info.PGPASSWORD)
+    .withEnv('POSTGRES_USER', info.PGHOST)
+    .withEnv('POSTGRES_DB', info.PGDATABASE)
+    .withExposedPorts(5432)
+    .start()
+
+  info.PGHOST = container.getHost()
+  info.PGPORT = container.getMappedPort(5432)
+  spinner.stop()
+
+  console.log(chalk.blue('  Postgres started, available at ') + chalk.blue.bold(info.PGPORT))
+
+  // remove first two arguments [node, path] from command arg
+  const cmd = process.argv.splice(2)
+  const env = { ...process.env, ...info }
+
+  const exitCode = await run(cmd, env)
+
+  await stopContainer()
+  process.exit(exitCode)
+}
+
+function run(command, env) {
+  return new Promise(resolve => {
+    const [cmd, ...args] = command
+    const child = spawn(cmd, args, { env })
+
+    child.stdout.on('data', chunk => process.stdout.write(chunk))
+    child.stderr.on('data', chunk => process.stderr.write(chunk))
+
+    child.on('close', code => {
+      if (code !== 0) {
+        const err = `  Child command ${command.join(' ')} exited with code ${code}`
+        console.error(chalk.red(err))
+      }
+      resolve(code)
+    })
+  })
+}
+
+// As stopping container can take a while and this script
+// can be interrupted at any time, we need to make sure
+// we don't ask docker to stop the container while the poor whale
+// is already doing its job.
+let containerStopInProgress = false
+async function stopContainer() {
+  if (container == null || containerStopInProgress) return
+  containerStopInProgress = true
+  const spinner = ora(chalk.blue('  Stopping Postgress')).start()
+  await container.stop()
+  spinner.stop()
+  console.log(chalk.blue('  Postgress docker container stopped'))
+}
+
+process.on('SIGINT', async function () {
+  console.log(chalk.yellow('  Caught interrupt signal'))
+  await stopContainer()
+  process.exit()
+})
+
+if (process.env.SKIP_DB) {
+  ci()
+} else {
+  main()
+}

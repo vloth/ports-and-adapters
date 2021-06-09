@@ -2,6 +2,7 @@ import chai from 'chai'
 import chaiHttp from 'chai-http'
 import * as dbManager from './db-manager'
 import * as appManager from './app-manager'
+import { register } from '@adapter/env'
 
 const isIntegration = String(process.env.INTEGRATION) === 'true'
 const isFunctional = String(process.env.FUNCTIONAL) === 'true'
@@ -11,10 +12,10 @@ if (isIntegration || isFunctional) {
   before(async function () {
     this.timeout(TIMEOUT)
 
-    // register()
+    process.env.PORT = '3000'
+    register()
 
-    const db = await dbManager.startPgContainer()
-    await dbManager.runMigrations(db)
+    await dbManager.migrate()
 
     if (isFunctional) {
       chai.use(chaiHttp)
@@ -29,7 +30,6 @@ if (isIntegration || isFunctional) {
   after(async function () {
     this.timeout(TIMEOUT)
 
-    if (isIntegration || isFunctional) await dbManager.stopPgContainer()
     if (isFunctional) await appManager.stopApplication(this.server)
   })
 }

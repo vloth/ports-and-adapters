@@ -5,11 +5,11 @@ suite('todo http transport')
 
 test('get all todos', async function () {
   const id = await storage.add({
-    description: 'do the dishes boy!',
+    description: 'task a',
     done: false
   })
 
   const res = await chai.request(this.server).get('/api/todo/')
 
-  expect(res.body).to.eql([{ id, description: 'do the dishes boy!', done: false, date: null }])
+  expect(res.body).to.eql([{ id, description: 'task a', done: false, date: null }])
 })

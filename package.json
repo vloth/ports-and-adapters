@@ -17,8 +17,8 @@
     "test:watch": "yarn test --watch --reporter min",
     "test:cover": "nyc yarn test",
     "test:cover:open": "open coverage/lcov-report/index.html",
-    "test:integration": "INTEGRATION=true mocha --recursive 'test/integration/**/*.test.ts'",
-    "test:functional": "FUNCTIONAL=true mocha --recursive 'test/functional/**/*.test.ts'"
+    "test:integration": "INTEGRATION=true script/wrap-db script/test 'test/integration/**/*.test.ts'",
+    "test:functional": "FUNCTIONAL=true script/wrap-db script/test 'test/functional/**/*.test.ts'"
   },
   "dependencies": {
     "fp-ts": "^2.6.5",
@@ -65,11 +65,12 @@
     "mocha": "^8.0.1",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
+    "ora": "^5.4.1",
     "pino-pretty": "^4.0.0",
     "prettier": "^2.0.5",
     "sinon": "^11.1.1",
     "sinon-chai": "^3.7.0",
-    "testcontainers": "^2.14.0",
+    "testcontainers": "^7.11.1",
     "ts-node": "^8.10.2",
     "ts-sinon": "^2.0.1",
     "tsc-watch": "^4.2.9",
