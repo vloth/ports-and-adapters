@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+/* eslint-disable no-console,@typescript-eslint/no-var-requires */
+const { spawn } = require('child_process')
+const chalk = require('chalk')
+
+async function main() {
+  // remove first two arguments [node, path] from command arg
+  const childCmd = process.argv.splice(2)
+
+  // TS_NODE_FILES makes ts-node behave like tsc.
+  // see: https://github.com/TypeStrong/ts-node#help-my-types-are-missing
+  const env = { ...process.env, TS_NODE_FILES: 'true', SERVICE_ENV: 'test' }
+
+  const [path, rest] = findFilesToRun(childCmd)
+
+  // Force rendering mocha tests with colors
+  const command = ['mocha', '--colors', '--preserve-symlinks'].concat(rest).concat(path)
+
+  const exitCode = await run(command, env)
+  process.exit(exitCode)
+}
+
+// search in the arguments if any file pattern
+// was given(.ts), if so give then to mocha test runner
+// otherwise use the default path which will always be
+// the first argument given to this script
+function findFilesToRun(args) {
+  const [defaultFilesToRun, ...rest] = args
+  if (!rest.length) return [defaultFilesToRun, rest]
+
+  const maybeAPath = rest.filter(arg => arg.endsWith('.ts'))
+  if (maybeAPath.length === 1) return [maybeAPath, rest]
+  if (maybeAPath.length === 0) return [defaultFilesToRun, rest]
+  console.log(chalk.red('Multiple path candidates found. Please verify the command arguments.'))
+  process.exit()
+}
+
+function run(command, env) {
+  return new Promise(resolve => {
+    const [cmd, ...args] = command
+    const child = spawn(cmd, args, { env })
+
+    child.stdout.on('data', chunk => process.stdout.write(chunk))
+    child.stderr.on('data', chunk => process.stderr.write(chunk))
+
+    child.on('close', code => {
+      if (code !== 0) {
+        const err = `Child command ${command.join(' ')} exited with code ${code}`
+        console.error(chalk.red(err))
+      }
+      resolve(code)
+    })
+  })
+}
+
+process.on('SIGINT', process.exit)
+
+main()
