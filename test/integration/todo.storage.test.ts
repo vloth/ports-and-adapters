@@ -2,7 +2,7 @@ import * as storage from '@core/todo/storage.adapter'
 
 suite('todo storage adapter')
 
-test('get all todos a', async function () {
+test.only('get all todos a', async function () {
   const todos = await storage.getAllTodos()
   expect(todos).to.eql([])
   const id = await storage.add({

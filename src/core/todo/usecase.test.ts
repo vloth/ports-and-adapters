@@ -1,4 +1,4 @@
-import * as todoFactory from '@factory/todo'
+import * as factory from '@factory/index'
 import * as storage from './storage.adapter'
 import * as usecase from './usecase'
 
@@ -9,7 +9,7 @@ beforeEach(function () {
 })
 
 test('mark pending task as done should update todo', async function () {
-  const pendingtask = todoFactory.base.combine(todoFactory.db).build({ done: false, date: null })
+  const pendingtask = factory.dbTodo.build()
 
   mockOf(storage.get).resolves(pendingtask)
   await usecase.markAsDone(pendingtask.id)
@@ -22,9 +22,7 @@ test('mark pending task as done should update todo', async function () {
 })
 
 test('mark an already completed task as done should fail', async function () {
-  const completedtask = todoFactory.base
-    .combine(todoFactory.db)
-    .build({ done: true, date: new Date() })
+  const completedtask = factory.dbTodo.build({ done: true, date: new Date() })
 
   mockOf(storage.get).resolves(completedtask)
 

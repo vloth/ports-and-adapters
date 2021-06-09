@@ -5,7 +5,7 @@ import { decode } from '@adapter/codec/decode'
 suite('todo core adapter')
 
 test('decode PendingTask', async function () {
-  const todo = factory.base.build({ done: false })
+  const todo = factory.todo.build()
   const decoded = decode(core.PendingTask, todo)
 
   expect(decoded).to.eql(todo)
@@ -13,7 +13,10 @@ test('decode PendingTask', async function () {
 })
 
 test('decode CompletedTask', async function () {
-  const todo = factory.base.combine(factory.dateString).build({ done: true })
+  const todo = factory.todo
+    .completed()
+    .build({ date: new Date().toISOString() }) as core.CompletedTask
+
   const decoded = decode(core.CompletedTask, todo)
 
   expect(decoded).to.eql({ ...todo, date: new Date(todo.date) })

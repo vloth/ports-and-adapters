@@ -1,16 +1,24 @@
-import { factory } from './index'
-import { Id } from '@adapter/id'
+import { Factory } from 'fishery'
+import { Todo } from '@core/todo/core.adapter'
+import { IGetResult } from '@core/todo/storage.adapter/sql/todo.queries'
 
-export const base = factory<{ description: string; done: boolean }>(faker => ({
-  done: faker.random.boolean(),
-  description: faker.lorem.sentence()
+class TodoFactory extends Factory<Todo> {
+  completed() {
+    return this.params({
+      done: true as const,
+      date: new Date()
+    })
+  }
+}
+
+export const todo = TodoFactory.define(() => ({
+  description: 'Task A',
+  done: false as const
 }))
 
-export const dateString = factory<{ date: string }>(faker => ({
-  date: faker.date.recent().toISOString()
-}))
-
-export const db = factory<{ id: Id; date: Date | null }>(faker => ({
-  id: faker.random.number(),
-  date: faker.date.recent()
+export const dbTodo = Factory.define<IGetResult>(({ sequence }) => ({
+  id: sequence,
+  description: 'Task A',
+  done: false,
+  date: null
 }))

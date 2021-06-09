@@ -1,15 +1,14 @@
+import { Id, Identified } from '@adapter/id'
+import { pool } from '@protocol/pg'
 import { ok } from 'assert'
 import { head } from 'ramda'
-import { pool } from '@protocol/pg'
-import { Identified, Id } from '@adapter/id'
-import * as query from './sql/todo.queries'
 import * as core from '../core.adapter'
+import * as query from './sql/todo.queries'
 
 export const getAllTodos = () => query.getAll.run(undefined, pool())
 
 export async function get(id: Id) {
-  const rows = await query.get.run({ id }, pool())
-  return head(rows)
+  return head(await query.get.run({ id }, pool()))
 }
 
 export function update(todo: Identified<core.Todo>) {
