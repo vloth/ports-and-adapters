@@ -1,6 +1,6 @@
 # 
 # ---- Base ----
-FROM node:14-alpine AS base
+FROM node:16-alpine AS base
 WORKDIR /usr/opt/app
 COPY database.json package.json yarn.lock .prettierrc.yaml .eslintrc.yml tsconfig.json ./
 
@@ -20,7 +20,7 @@ RUN yarn build && cp -R src /usr/opt/app-build/src
 
 #
 # ---- Build ----
-FROM node:14-alpine AS build
+FROM node:16-alpine AS build
 ENV PORT 3000
 WORKDIR /usr/opt/app
 COPY --from=develop /usr/opt/app-build/ ./

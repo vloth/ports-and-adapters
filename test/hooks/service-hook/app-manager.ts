@@ -17,7 +17,7 @@ export async function stopApplication(server: Server | undefined) {
     : new Promise(resolve =>
         server.close(() => {
           debug(' app stopped')
-          resolve()
+          resolve(undefined)
         })
       )
 }

@@ -16,9 +16,8 @@ Object.assign(global, {
 })
 
 beforeEach(function () {
-  sinon.spy(logger, 'info')
-  sinon.spy(logger, 'warn')
-  sinon.spy(logger, 'error')
+  const levels = Object.values(logger.levels.labels)
+  levels.forEach(lvl => sinon.stub(logger, lvl))
 })
 
 afterEach(sinon.restore)
