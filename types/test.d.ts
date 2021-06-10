@@ -1,7 +1,7 @@
 import type * as chai from 'chai'
 import type * as sinon from 'ts-sinon'
 import type { stubInterface } from 'ts-sinon'
-import type * as utility from '../test/hooks/utility'
+import type * as utility from '../test/utility'
 
 declare global {
   declare const expect: typeof chai.expect

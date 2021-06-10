@@ -1,8 +1,7 @@
 import * as t from 'io-ts'
 import { NumberFromString } from 'io-ts-types/lib/NumberFromString'
-import { decode } from './codec/decode'
 
-const Env = t.readonly(
+export const Env = t.readonly(
   t.strict({
     port: NumberFromString,
     nodeEnv: t.keyof({ production: null, development: null }),
@@ -18,11 +17,8 @@ const Env = t.readonly(
   })
 )
 
-export type Env = t.TypeOf<typeof Env>
-export let env: Env
-
-export function register() {
-  env = decode(Env, {
+export function manifest() {
+  return {
     nodeEnv: process.env.NODE_ENV,
     port: process.env.PORT,
     db: {
@@ -32,6 +28,5 @@ export function register() {
       database: process.env.PGDATABASE,
       port: process.env.PGPORT
     }
-  })
-  return env
+  }
 }

@@ -3,7 +3,7 @@ import 'chai/register-expect'
 import chai from 'chai'
 import chaiP from 'chai-as-promised'
 import chaiS from 'sinon-chai'
-import * as utility from './utility'
+import * as utility from '../utility'
 import sinon, { stubInterface } from 'ts-sinon'
 import { logger } from '@protocol/logger'
 

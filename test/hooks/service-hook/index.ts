@@ -3,6 +3,7 @@ import chai from 'chai'
 import chaiHttp from 'chai-http'
 import * as db from './db-manager'
 import { start, registerGracefullShutdown } from '../../../src/lifecycle'
+import { set } from './test-env'
 
 const isIntegration = String(process.env.INTEGRATION) === 'true'
 const isFunctional = String(process.env.FUNCTIONAL) === 'true'
@@ -12,8 +13,7 @@ if (isIntegration || isFunctional) {
   before(async function () {
     this.timeout(TIMEOUT)
 
-    process.env.PORT = '3000'
-
+    set()
     const { server } = start({ http: isFunctional, port: 0 })
     await db.migrate()
 

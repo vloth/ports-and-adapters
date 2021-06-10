@@ -1,3 +1,15 @@
+import * as EnvMap from '@adapter/env/map'
+
 export function set() {
-  process.env.PORT = '3000'
+  sinon.replace(EnvMap, 'manifest', () => ({
+    nodeEnv: 'development',
+    port: '0',
+    db: {
+      password: process.env.PGPASSWORD,
+      host: process.env.PGHOST,
+      user: process.env.PGUSER,
+      database: process.env.PGDATABASE,
+      port: process.env.PGPORT
+    }
+  }))
 }
