@@ -5,6 +5,7 @@ import { decode } from './codec/decode'
 const Env = t.readonly(
   t.strict({
     port: NumberFromString,
+    nodeEnv: t.keyof({ production: null, development: null }),
     db: t.readonly(
       t.strict({
         password: t.string,
@@ -17,11 +18,12 @@ const Env = t.readonly(
   })
 )
 
-type Env = t.TypeOf<typeof Env>
+export type Env = t.TypeOf<typeof Env>
 export let env: Env
 
 export function register() {
   env = decode(Env, {
+    nodeEnv: process.env.NODE_ENV,
     port: process.env.PORT,
     db: {
       password: process.env.PGPASSWORD,

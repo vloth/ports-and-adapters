@@ -1,8 +1,8 @@
+import { ok } from 'assert'
 import chai from 'chai'
 import chaiHttp from 'chai-http'
-import * as dbManager from './db-manager'
-import * as appManager from './app-manager'
-import { register } from '@adapter/env'
+import * as db from './db-manager'
+import { start, registerGracefullShutdown } from '../../../src/lifecycle'
 
 const isIntegration = String(process.env.INTEGRATION) === 'true'
 const isFunctional = String(process.env.FUNCTIONAL) === 'true'
@@ -13,23 +13,26 @@ if (isIntegration || isFunctional) {
     this.timeout(TIMEOUT)
 
     process.env.PORT = '3000'
-    register()
 
-    await dbManager.migrate()
+    const { server } = start({ http: isFunctional, port: 0 })
+    await db.migrate()
 
     if (isFunctional) {
+      ok(server, 'Functional test requires defined server')
       chai.use(chaiHttp)
-      this.server = await appManager.startApplication()
+      this.server = server
     }
   })
 
   beforeEach(async function () {
-    await dbManager.clean()
+    await db.clean()
   })
 
   after(async function () {
     this.timeout(TIMEOUT)
+    if (isIntegration) process.exit()
 
-    if (isFunctional) await appManager.stopApplication(this.server)
+    const shutdown = registerGracefullShutdown({ isDevelop: true })
+    await shutdown()
   })
 }

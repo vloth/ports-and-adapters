@@ -2234,6 +2234,13 @@ http-errors@^1.6.3, http-errors@^1.7.3:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
+http-graceful-shutdown@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/http-graceful-shutdown/-/http-graceful-shutdown-3.1.1.tgz#bbca6a7bd84794cd273cf2ab86e5c211881d4f04"
+  integrity sha512-7teLZa+KJfNVN5F+c73PusUv5bE+DN5KNQ3B0e+Gdw4hRP7jbnowbEb3621NuEAvbq1xAlXxQq1FZyiciM2NTw==
+  dependencies:
+    debug "^4.3.1"
+
 i@0.3.x:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/i/-/i-0.3.6.tgz#d96c92732076f072711b6b10fd7d4f65ad8ee23d"

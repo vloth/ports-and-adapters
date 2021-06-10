@@ -1,11 +1,10 @@
 import 'module-alias/register'
 
-import { app } from './app'
-import { register } from '@adapter/env'
+import { start, registerGracefullShutdown } from './lifecycle'
 import { logger } from '@protocol/logger'
 
-process.on('unhandledRejection', rejection => {
-  throw rejection
+process.on('unhandledRejection', reason => {
+  throw reason
 })
 
 process.on('uncaughtException', reason => {
@@ -13,5 +12,5 @@ process.on('uncaughtException', reason => {
   process.exit(1)
 })
 
-const env = register()
-app.listen(env.port, () => logger.info('Application running on port %d', env.port))
+const { env } = start()
+registerGracefullShutdown({ isDevelop: env.nodeEnv === 'development' })

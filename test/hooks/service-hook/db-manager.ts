@@ -18,14 +18,13 @@ const skipTables = ['migrations']
 
 export async function clean() {
   const { pool } = await import('@protocol/pg')
-  const p = pool()
 
-  const query = await p.query(
+  const query = await pool.query(
     `SELECT TABLE_NAME FROM information_schema.tables
      WHERE table_schema = 'public'
      AND table_type = 'BASE TABLE';`
   )
 
   const tables = query.rows.map(t => t.table_name).filter(t => !skipTables.includes(t))
-  return Promise.all(tables.map(t => p.query(`DELETE FROM ${t}`)))
+  return Promise.all(tables.map(t => pool.query(`DELETE FROM ${t}`)))
 }
